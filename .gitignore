@@ -1,0 +1,8 @@
+credentials.json
+
+.cache*
+*pickle
+token.pickle
+.DS_Store
+authentication.py
+__pycache__/
