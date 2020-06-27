@@ -44,22 +44,30 @@ def main():
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
+    # service is top-level resource for gmail api after authorizing
     service = build('gmail', 'v1', credentials=creds)
-    spotify_test()
+
+    # spotify authentication
+    scope = "streaming user-modify-playback-state user-read-playback-state" # scope of authority
+    # sp is top-level resource for spotify api after authorizing
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, username=authentication.USERNAME, client_id=authentication.CLIENT_ID, client_secret=authentication.CLIENT_SECRET, redirect_uri = authentication.REDIRECT_URI))
+
+    spotify_test(sp)
     # messages_service(service)
     # original_request(service)
 
 
 # test method for spotipy library
-def spotify_test():
-    scope = "user-library-read"
+def spotify_test(service):
+    service.add_to_queue("spotify:track:7lEptt4wbM0yJTvSG5EBof")
+    if not is_playing(service):
+        service.next_track()
 
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, username=authentication.USERNAME, client_id=authentication.CLIENT_ID, client_secret=authentication.CLIENT_SECRET, redirect_uri = authentication.REDIRECT_URI))
 
-    results = sp.current_user_saved_tracks()
-    # for idx, item in enumerate(results['items']):
-    #     track = item['track']
-    #     print(idx, track['artists'][0]['name'], " – ", track['name'])
+# return true if currently playing a song, else false
+def is_playing(service):
+    return service.current_playback()['is_playing']
+
 
 
 # near-top level helper method to look through emails that have been labeled
