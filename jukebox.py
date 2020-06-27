@@ -2,6 +2,7 @@ from __future__ import print_function
 import pickle
 import os.path
 import base64
+import json
 
 import spotipy
 import authentication
@@ -20,6 +21,9 @@ USERID = authentication.EMAIL
 # retrieved ID for the label "Requests"
 # ## running original_request provides the IDs
 LABELID = authentication.REQUESTS_LABEL
+
+# max length of songs to queue in ms. (isn't she lovely is 394000)
+MAXLENGTH = 395000
 
 def main():
     """Shows basic usage of the Gmail API.
@@ -48,7 +52,7 @@ def main():
     service = build('gmail', 'v1', credentials=creds)
 
     # spotify authentication
-    scope = "streaming user-modify-playback-state user-read-playback-state" # scope of authority
+    scope = "streaming user-modify-playback-state user-read-playback-state user-read-private" # scope of authority
     # sp is top-level resource for spotify api after authorizing
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, username=authentication.USERNAME, client_id=authentication.CLIENT_ID, client_secret=authentication.CLIENT_SECRET, redirect_uri = authentication.REDIRECT_URI))
 
@@ -59,13 +63,36 @@ def main():
 
 # test method for spotipy library
 def spotify_test(service):
-    service.add_to_queue("spotify:track:7lEptt4wbM0yJTvSG5EBof")
+    queue_song(service, "in my life")
+    # queue_song(service, "podcast")
     if not is_playing(service):
         service.next_track()
+
+# tries to search for passed song.
+# if found, queue and return true.
+# if not found, return false.
+def queue_song(service, song):
+    print("Attempting to queue " + str(song))
+    res = service.search(q=song, type='track', market='US')
+    count = res['tracks']['total']
+
+    total = min(count, 10)
+    i = 0
+    while i < total:
+        cur = res['tracks']['items'][i]
+        pretty_print(cur)
+        if cur['duration_ms'] <= MAXLENGTH and cur['is_playable']:
+            service.add_to_queue(cur['uri'])
+            return True
+
+    # no songs found
+    return False
 
 
 # return true if currently playing a song, else false
 def is_playing(service):
+    if service.current_playback() == None:
+        return False
     return service.current_playback()['is_playing']
 
 
@@ -127,14 +154,6 @@ def make_requests(coins, note):
 
     print("Should refund " + str((permitted * 5) + refund) + " cents.")
 
-
-# pass a song to search
-# if found and queued successfully, return true, else false
-def queue_song(song):
-    print("Queueing " + str(song))
-    return True
-
-
 # returns a tuple with the number of nickels paid (divides payment by $0.05)
 # and the number of cents remaining if any (not a multiple of 0.05)
 def get_coins(headers):
@@ -157,8 +176,11 @@ def get_note(html):
     closing = html.index("</p>")
     return(html[0: closing])
 
+# pretty prints passed json object
+def pretty_print(target):
+    print(json.dumps(target, indent=2))
 
-
+# this was the sample code provided. not used
 def original_request(service):
     # Call the Gmail API
     results = service.users().labels().list(userId='me').execute()
@@ -170,7 +192,6 @@ def original_request(service):
         print('Labels:')
         for label in labels:
             print(label['name'] + ", id: " + label['id'])
-
 
 if __name__ == '__main__':
     main()
