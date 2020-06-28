@@ -29,6 +29,10 @@ You'll need the packages [Spotipy](https://spotipy.readthedocs.io/en/2.13.0/) (P
 
 ## Setup
 Enable [Gmail API](https://developers.google.com/gmail/api/quickstart/python), and save the given credentials.json file into the same folder as jukebox.py.
+Set up a filter to label incoming messages from venmo@venmo.com with the content "This payment will be reviewed for compliance with our User Agreement and if we determine that there is a violation by either party, it may be reversed or your ability to transfer to your bank account may be restricted". This should match any payment notification emails from Venmo, but not other emails such as friend requests or security notifications.
+![Image of the filter settings](https://github.com/Austin-Tan/venmo-jukebox/blob/master/filter.PNG)
+
+
 Right now, the Spotify section isn't set up as a single app that many users can connect to hosted on my developer dashboard. To use it, will need to create your own [app here](https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app) and copy the client ID and secret into the given fields in authentication.py.
 Copy Username from your Spotify account into the field in authentication.py.
 Add the REDIRECT_URI **from authentication.py into the app on the developer dashboard**.
