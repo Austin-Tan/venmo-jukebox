@@ -65,6 +65,9 @@ def main():
 
     while True:
         messages_service(service)
+        # if is_playing(SPOTIFY_SERVICE):
+        #     print("Currently playing " + format_song(SPOTIFY_SERVICE.currently_playing()))
+        # else:
         print("No new requests found, sleeping for another 5 seconds...")
         time.sleep(5)
 
@@ -83,7 +86,7 @@ def format_song(song):
 
 
 # test method for spotipy library
-# def spotify_test(service):
+def spotify_test(service):
     # pretty_print(service.current_playback())
     # device_id = service.current_playback()['device']['id']
     # print("Id is " + str(device_id))
@@ -113,7 +116,6 @@ def queue_song(song):
     i = 0
     while i < total:
         cur = res['tracks']['items'][i]
-        # pretty_print(cur)
         if cur['duration_ms'] <= MAXLENGTH and cur['is_playable']:
             service.add_to_queue(cur['uri'], authentication.DEVICE_ID)
             if not is_playing(service):
@@ -121,6 +123,7 @@ def queue_song(song):
 
             print("Queueing " + format_song(cur))
             return True
+        i += 1
 
     # no songs found
     print("Could not find " + str(song))
