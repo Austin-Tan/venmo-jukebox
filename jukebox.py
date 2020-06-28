@@ -60,8 +60,8 @@ def main():
     # sp is top-level resource for spotify api after authorizing
     SPOTIFY_SERVICE = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, username=authentication.USERNAME, client_id=authentication.CLIENT_ID, client_secret=authentication.CLIENT_SECRET, redirect_uri = authentication.REDIRECT_URI))
 
-    # spotify_test(SPOTIFY_SERVICE)
-    # original_request(service)
+    # get_device_id(SPOTIFY_SERVICE)
+    # get_label_ids(service)
 
     while True:
         messages_service(service)
@@ -85,16 +85,10 @@ def format_song(song):
     return "" + str(title) + " by " + str(artist) + " - " + str(minutes) + ":" + str(seconds)
 
 
-# test method for spotipy library
-def spotify_test(service):
-    # pretty_print(service.current_playback())
-    # device_id = service.current_playback()['device']['id']
-    # print("Id is " + str(device_id))
-    # pretty_print(service.devices())
-    # queue_song("in my life")
-    # queue_song(service, "podcast")
-    # if not is_playing(service):
-    service.next_track()
+# prints the active streaming devices
+def get_device_id(service):
+    device_id = service.current_playback()['device']['id']
+    print("Id is " + str(device_id))
 
 # tries to search for passed song.
 # if found, queue and return true.
@@ -248,8 +242,8 @@ def get_note(html):
 def pretty_print(target):
     print(json.dumps(target, indent=2))
 
-# this was the sample code provided. not used
-def original_request(service):
+# run this if you need to get label IDs for authentication.py
+def get_label_ids(service):
     # Call the Gmail API
     results = service.users().labels().list(userId='me').execute()
     labels = results.get('labels', [])
