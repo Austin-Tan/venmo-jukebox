@@ -10,7 +10,7 @@ The device with Spotify needs to be opened and recently active (can be paused or
 
 Refunds are currently not enabled, but the infrastructure is in place to function once Payouts with Venmo API is integrated. We refund if the search feature cannot find the song requested (code for calculation is done), or if the song is skipped (code has not started).
 
-### Example transactions and behavior:
+### Example Venmo transactions and behavior:
 ```
 $0.15 - in my life
 just the way you are - billy joel
@@ -28,7 +28,17 @@ Correctly queues *Bridge Over Troubled Water* by S&G despite the typo, but incor
 You'll need the packages [Spotipy](https://spotipy.readthedocs.io/en/2.13.0/) (Python wrapper for Spotify API) and the [Gmail Python API library](https://developers.google.com/gmail/api). 
 
 ## Setup
-Fill in authentication.py with the client information for the Gmail account which receives your Venmo payment notifications, and the client information for your Spotify account.
+Enable [Gmail API](https://developers.google.com/gmail/api/quickstart/python), and save the given credentials.json file into the same folder as jukebox.py.
+Right now, the Spotify section isn't set up as a single app that many users can connect to hosted on my developer dashboard. To use it, will need to create your own [app here](https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app) and copy the client ID and secret into the given fields in authentication.py.
+Copy Username from your Spotify account into the field in authentication.py.
+Add the REDIRECT_URI **from authentication.py into the app on the developer dashboard**.
+
+At this point, you should be able to run:
+```python jukebox.py```
+where it'll print its actions to the command line and open up web clients to authenticate the application to both Gmail and Spotify. If you uncomment the calls in main() to get_label_ids() and get_device_id(), it'll print the respective information to the command line, and you can fill out the last bits of authentication.py.
+
+A test transaction of $0.05 and a song of your choice while Spotify is open is a good way to test this!
+
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
