@@ -3,6 +3,8 @@
 This application interfaces between Venmo (through Gmail API in reading payment notifications, we don't ever touch Venmo directly) and Spotify to
 queue song requests off Venmo transactions.
 
+**Please note:** This was written for fun and, while functional, is a pain to distribute/get working on any device besides the one I tested on. Might eventually get around to seeing how this could be hosted as a Spotify Developer App/Extension.
+
 ## Usage Specifics
 Running "python jukebox.py" starts an infinite while loop that detects for new Venmo transactions (through filtered and labeled emails). The content of the "note" in the transaction is what is used to search for songs, and the transaction amount is used to determine how many songs they are allotted (1 nickel = 1 request, so ten cents will look for two requests). A request can either be a song, or "skip" in which the currently playing track is skipped. If multiple requests are included in one note, they need to be separated with either newlines or commas (so don't search for songs with either newlines or commas in the title!)
 
